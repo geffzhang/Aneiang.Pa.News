@@ -1,6 +1,4 @@
-using Aneiang.Pa.AspNetCore.Extensions;
-using Aneiang.Pa.Lottery.Extensions;
-using Aneiang.Pa.News.Extensions;
+using Aneiang.Pa.AspNetCore;
 using Microsoft.Extensions.FileProviders;
 using Serilog;
 using Serilog.Events;
@@ -60,14 +58,8 @@ builder.Services.AddHttpClient("ArtificialAnalysis", client =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// 2. Register Aneiang.Pa services
-
-// Register all news scrapers from Aneiang.Pa.News
-builder.Services.AddNewsScraper(builder.Configuration);
-builder.Services.AddLotteryScraper();
-
-// Add and configure the ScraperController from Aneiang.Pa.AspNetCore
-builder.Services.AddPaScraperApi(builder.Configuration).AddPaScraperAuthorization(builder.Configuration);
+// 2. Register Aneiang.Pa services (v4.0): unified registration for all scrapers & lottery
+builder.Services.AddPa();
 
 var app = builder.Build();
 
@@ -120,6 +112,7 @@ app.UseCors();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapPaApi(); // Aneiang.Pa 4.0 built-in scraper endpoints
 
 // 4. Add static files and SPA fallback
 var wwwrootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");

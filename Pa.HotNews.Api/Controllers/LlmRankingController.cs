@@ -1,7 +1,6 @@
-using Aneiang.Pa.AspNetCore.Caching;
-using Aneiang.Pa.AspNetCore.Options;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Caching.Memory;
+using Pa.HotNews.Api.Extensions;
 using Serilog;
 using System.Net.Http.Headers;
 
@@ -12,21 +11,18 @@ namespace Pa.HotNews.Api.Controllers;
 public sealed class LlmRankingController : ControllerBase
 {
     private const string CacheKeyModels = "llm-ranking:models:v1";
-    private readonly ScraperControllerOptions _options;
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly IConfiguration _configuration;
-    private readonly ICacheService _cache;
+    private readonly IMemoryCache _cache;
 
     public LlmRankingController(
         IHttpClientFactory httpClientFactory,
-        ICacheService cache,
-        IConfiguration configuration,
-        IOptions<ScraperControllerOptions> options)
+        IMemoryCache cache,
+        IConfiguration configuration)
     {
         _httpClientFactory = httpClientFactory;
         _cache = cache;
         _configuration = configuration;
-        _options = options?.Value ?? new ScraperControllerOptions();
     }
 
     /// <summary>

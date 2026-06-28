@@ -1,6 +1,6 @@
 ﻿@page "/"
 
-@using Aneiang.Pa.Core.News.Models
+@using Pa.HotNews.Blazor.Models
 @inject Pa.HotNews.Blazor.Services.HotNewsLocalClient Api
 @inject Pa.HotNews.Blazor.Services.AppState AppState
 @inject Pa.HotNews.Blazor.Services.LocalStorageService LocalStorage
@@ -270,10 +270,10 @@ else
 
                     _blocks[key] = new SourceBlock
                     {
-                        Status = payload is { IsSuccessd: true } ? BlockStatus.Success : BlockStatus.Error,
-                        Items = payload?.Data?.ToList() ?? new List<Aneiang.Pa.Core.News.Models.NewsItem>(),
+                        Status = payload is { IsSuccess: true } ? BlockStatus.Success : BlockStatus.Error,
+                        Items = payload?.Data?.ToList() ?? new List<NewsItem>(),
                         UpdatedTime = payload?.UpdatedTime,
-                        Error = payload is { IsSuccessd: false } ? payload.ErrorMessage : null
+                        Error = payload is { IsSuccess: false } ? payload.ErrorMessage : null
                     };
                 }
                 catch (Exception ex)
@@ -281,7 +281,7 @@ else
                     _blocks[key] = new SourceBlock
                     {
                         Status = BlockStatus.Error,
-                        Items = new List<Aneiang.Pa.Core.News.Models.NewsItem>(),
+                        Items = new List<NewsItem>(),
                         UpdatedTime = null,
                         Error = ex.Message
                     };
@@ -315,10 +315,10 @@ else
 
             _blocks[key] = new SourceBlock
             {
-                Status = payload is { IsSuccessd: true } ? BlockStatus.Success : BlockStatus.Error,
-                Items = payload?.Data?.ToList() ?? new List<Aneiang.Pa.Core.News.Models.NewsItem>(),
+                Status = payload is { IsSuccess: true } ? BlockStatus.Success : BlockStatus.Error,
+                Items = payload?.Data?.ToList() ?? new List<NewsItem>(),
                 UpdatedTime = payload?.UpdatedTime,
-                Error = payload is { IsSuccessd: false } ? payload.ErrorMessage : null
+                Error = payload is { IsSuccess: false } ? payload.ErrorMessage : null
             };
         }
         catch (Exception ex)
@@ -326,7 +326,7 @@ else
             _blocks[key] = new SourceBlock
             {
                 Status = BlockStatus.Error,
-                Items = new List<Aneiang.Pa.Core.News.Models.NewsItem>(),
+                Items = new List<NewsItem>(),
                 UpdatedTime = null,
                 Error = ex.Message
             };

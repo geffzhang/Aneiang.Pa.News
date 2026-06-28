@@ -1,4 +1,4 @@
-using Aneiang.Pa.News.Extensions;
+using Aneiang.Pa.AspNetCore;
 using Serilog;
 
 // Serilog：尽早接管日志管道（避免启动早期日志丢失）
@@ -35,7 +35,7 @@ try
         builder.Configuration.GetSection(Pa.HotNews.Blazor.Services.HotNewsCacheOptions.SectionName));
 
     // 直接在 Blazor Server 里注册 Aneiang.Pa 的 Scraper（不再通过 HttpClient 调用 Pa.HotNews.Api）
-    builder.Services.AddNewsScraper(builder.Configuration);
+    builder.Services.AddPa();
 
     builder.Services.AddScoped<Pa.HotNews.Blazor.Services.HotNewsLocalClient>();
     builder.Services.AddScoped<Pa.HotNews.Blazor.Services.LocalStorageService>();

@@ -1,78 +1,75 @@
-using Aneiang.Pa.Core.News;
-using Aneiang.Pa.Core.News.Models;
-using Aneiang.Pa.News.Models;
-using Aneiang.Pa.News.News;
+using Aneiang.Pa.Abstractions;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
+using Pa.HotNews.Blazor.Models;
 
 namespace Pa.HotNews.Blazor.Services;
 
 /// <summary>
-/// Blazor Server 端直连 Aneiang.Pa.News 的新闻抓取服务（强类型）。
+/// Blazor Server 端直连 Aneiang.Pa 4.0 的新闻抓取服务（强类型）。
+/// 使用 Aneiang.Pa.Pa.Source(name).GetAsync&lt;T&gt;() 替代旧的 INewsScraperFactory 模式。
 /// </summary>
 public sealed class HotNewsLocalClient
 {
-    private readonly INewsScraperFactory _scraperFactory;
     private readonly IMemoryCache _cache;
     private readonly HotNewsCacheOptions _cacheOptions;
 
     public HotNewsLocalClient(
-        INewsScraperFactory scraperFactory,
         IMemoryCache cache,
         IOptions<HotNewsCacheOptions> cacheOptions)
     {
-        _scraperFactory = scraperFactory;
         _cache = cache;
         _cacheOptions = cacheOptions.Value ?? new HotNewsCacheOptions();
     }
 
+    /// <summary>
+    /// 获取所有已注册的数据源名称（Recipe Name）。
+    /// </summary>
     public Task<List<string>> GetSourcesAsync(CancellationToken ct = default)
     {
         _ = ct;
 
-        // 直接基于 ScraperSource 枚举提供来源列表
-        var sources = Enum.GetNames(typeof(ScraperSource))
-            .Select(x => x.Trim())
-            .Where(x => x.Length > 0)
+        var sources = Aneiang.Pa.Pa.Sources()
+            .Select(r => r.Name)
+            .Where(x => !string.IsNullOrWhiteSpace(x))
+            .Distinct(StringComparer.OrdinalIgnoreCase)
             .ToList();
 
         return Task.FromResult(sources);
     }
 
-    public async Task<AneiangGenericListResult<NewsItem>?> GetNewsAsync(
+    /// <summary>
+    /// 获取指定来源的新闻列表（支持缓存）。
+    /// </summary>
+    public async Task<ScrapeResult<NewsItem>?> GetNewsAsync(
         string source,
         bool bustCache = false,
         CancellationToken ct = default)
     {
         if (string.IsNullOrWhiteSpace(source)) return null;
 
-        var key = (source ?? string.Empty).Trim().ToLowerInvariant();
+        var key = source.Trim().ToLowerInvariant();
         if (key.Length == 0) return null;
 
         var cacheKey = $"hotnews:news:{key}";
 
-        if (!bustCache && _cache.TryGetValue(cacheKey, out AneiangGenericListResult<NewsItem>? cached) && cached is not null)
+        if (!bustCache && _cache.TryGetValue(cacheKey, out ScrapeResult<NewsItem>? cached) && cached is not null)
             return cached;
 
-        AneiangGenericListResult<NewsItem> result;
+        ScrapeResult<NewsItem> result;
         try
         {
-            if (!Enum.TryParse<ScraperSource>(source, ignoreCase: true, out var src))
-                result = AneiangGenericListResult<NewsItem>.Failure($"未知来源：{source}");
-            else
-            {
-                var scraper = _scraperFactory.GetScraper(src);
-                // INewsScraper 接口：GetNewsAsync()
-                result = await scraper.GetNewsAsync();
-            }
+            var handle = Aneiang.Pa.Pa.Source(source);
+            if (bustCache) handle = handle.NoCache();
+            result = await handle.GetAsync<NewsItem>(ct);
         }
         catch (Exception ex)
         {
-            result = AneiangGenericListResult<NewsItem>.Failure(ex.Message);
+            result = ScrapeResult<NewsItem>.Fail(ex.Message);
         }
 
-        // 成功/失败不同缓存时长：避免失败时长时间“坏缓存”
-        var durationSeconds = result.IsSuccessd
+        // 成功/失败不同缓存时长：避免失败时长时间"坏缓存"
+        var durationSeconds = result.IsSuccess
             ? _cacheOptions.DurationSeconds
             : _cacheOptions.FailureDurationSeconds;
 

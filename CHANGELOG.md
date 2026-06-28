@@ -1,5 +1,24 @@
 # 变更日志（Changelog）
 
+## [1.0.9] - 2026-06-28
+
+### 依赖/迁移
+
+- **重大升级**：`Pa.HotNews.Api` 从 .NET 8 → .NET 10，Aneiang.Pa 从 2.x → 4.0.0
+
+  - `Aneiang.Pa.AspNetCore`: 2.1.6 → 4.0.0（破坏性更新，API 完全重构）
+  - `Swashbuckle.AspNetCore`: 6.5.0 → 10.2.3
+  - `Serilog.AspNetCore`: 8.0.3 → 10.0.0
+  - `Serilog.Settings.Configuration`: 8.0.4 → 10.0.1
+  - `Serilog.Sinks.Console`: 6.0.0 → 6.1.1
+  - `Serilog.Sinks.File`: 6.0.0 → 7.0.0
+
+### 适配（Aneiang.Pa 4.x API 迁移）
+
+- `Program.cs`: 用 `builder.Services.AddPa()` + `app.MapPaApi()` 替代已删除的 `AddNewsScraper()` / `AddLotteryScraper()` / `AddPaScraperApi()` / `AddPaScraperAuthorization()`
+- `LlmRankingController.cs`: 用 `IMemoryCache` + 自定义异步扩展替代已删除的 `ICacheService` / `ScraperControllerOptions`
+- 新增 `Extensions/MemoryCacheExtensions.cs`: 为 `IMemoryCache` 提供 `GetOrCreateAsync` / `RemoveAsync` 异步扩展
+
 ## [1.0.8] - 2026-01-19
 
 ### 功能/体验
