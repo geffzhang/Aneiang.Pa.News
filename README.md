@@ -73,7 +73,14 @@ Aneiang.Pa.News 是一个现代化的热点/热搜聚合平台，提供“多源
 
 ## 技术栈
 
-### 前端 (`Pa.HotNews.Web`)
+### Blazor 前端 (`Pa.HotNews.Blazor`)
+
+- **框架**：Blazor Server（.NET 10）
+- **UI 组件库**：AntDesign Blazor 1.6
+- **爬虫库**：Aneiang.Pa 4.0
+- **日志系统**：Serilog
+
+### React 前端 (`Pa.HotNews.Web`)
 - **框架**：React 19 (JavaScript, JSX)
 - **构建工具**：Vite 7.x
 - **UI 组件库**：Ant Design 6.x
@@ -82,8 +89,8 @@ Aneiang.Pa.News 是一个现代化的热点/热搜聚合平台，提供“多源
 - **代码规范**：ESLint
 
 ### 后端 (`Pa.HotNews.Api`)
-- **运行时**：.NET 8
-- **Web 框架**：ASP.NET Core 8
+- **运行时**：.NET 10
+- **Web 框架**：ASP.NET Core 10
 - **HTTP 客户端**：HttpClientFactory
 - **依赖注入**：内置 DI 容器
 - **日志系统**：Serilog
@@ -195,7 +202,7 @@ docker compose up -d
 
 #### 先决条件
 
-- .NET 8.0 SDK 或更高版本
+- .NET 10.0 SDK 或更高版本
 - Node.js 18+ 和 npm 9+
 - Git
 
@@ -215,7 +222,16 @@ dotnet run
 ```
 后端服务将运行在 `http://localhost:8080`。
 
-#### 3. 启动前端开发服务器
+#### 3. 启动 Blazor 前端（可选）
+
+```bash
+cd Pa.HotNews.Blazor
+dotnet restore
+dotnet run
+```
+Blazor Server 应用将运行在 `https://localhost:5001`。
+
+#### 4. 启动 React 前端
 
 打开一个新的终端窗口：
 
@@ -231,9 +247,16 @@ npm run dev
 ```
 Aneiang.Pa.News/
 ├── docments/           # 文档和截图
-├── Pa.HotNews.Api/     # .NET Web API 后端项目
+├── Pa.HotNews.Api/     # .NET Web API 后端项目（.NET 10 / Aneiang.Pa 4.0）
 │   ├── Controllers/    # API 控制器
+│   ├── Extensions/     # 扩展方法
 │   ├── Services/       # 业务逻辑
+│   └── Program.cs      # 应用入口
+├── Pa.HotNews.Blazor/  # Blazor Server 前端项目（.NET 10 / Aneiang.Pa 4.0）
+│   ├── Models/         # 数据模型
+│   ├── Pages/          # Razor 页面
+│   ├── Services/       # 业务服务
+│   ├── Shared/         # 共享组件
 │   └── Program.cs      # 应用入口
 ├── Pa.HotNews.Web/     # React 前端项目
 │   ├── public/         # 静态资源
@@ -307,6 +330,7 @@ Aneiang.Pa.News/
 - [Aneiang.Pa](https://pa.aneiang.com/) - 功能丰富的 .NET 模块化爬虫库
 - [React](https://reactjs.org/) - 用于构建用户界面的 JavaScript 库
 - [Ant Design](https://ant.design/) - 企业级 UI 设计语言
+- [AntDesign Blazor](https://antblazor.com/) - Blazor 版 Ant Design 组件库
 - [Vite](https://vitejs.dev/) - 下一代前端工具链
 - [ArtificialAnalysis](https://artificialanalysis.ai/) - 大模型排行榜数据源
 

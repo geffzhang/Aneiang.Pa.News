@@ -74,7 +74,14 @@ Aneiang.Pa.News is a modern hot news / trending topics aggregation platform. It 
 
 ## Tech Stack
 
-### Frontend (`Pa.HotNews.Web`)
+### Blazor Frontend (`Pa.HotNews.Blazor`)
+
+- **Framework**: Blazor Server (.NET 10)
+- **UI Library**: AntDesign Blazor 1.6
+- **Crawler Library**: Aneiang.Pa 4.0
+- **Logging**: Serilog
+
+### React Frontend (`Pa.HotNews.Web`)
 
 - **Framework**: React 19 (JavaScript, JSX)
 - **Build Tool**: Vite 7.x
@@ -85,8 +92,8 @@ Aneiang.Pa.News is a modern hot news / trending topics aggregation platform. It 
 
 ### Backend (`Pa.HotNews.Api`)
 
-- **Runtime**: .NET 8
-- **Web Framework**: ASP.NET Core 8
+- **Runtime**: .NET 10
+- **Web Framework**: ASP.NET Core 10
 - **HTTP Client**: HttpClientFactory
 - **Dependency Injection**: built-in DI container
 - **Logging**: Serilog
@@ -194,7 +201,7 @@ After startup:
 
 #### Prerequisites
 
-- .NET 8 SDK+
+- .NET 10 SDK+
 - Node.js 18+ (npm 9+)
 - Git
 
@@ -208,7 +215,17 @@ dotnet run
 
 Backend runs on `http://localhost:8080`.
 
-#### Frontend
+#### Blazor Frontend (Optional)
+
+```bash
+cd Pa.HotNews.Blazor
+dotnet restore
+dotnet run
+```
+
+Blazor Server app runs on `https://localhost:5001`.
+
+#### React Frontend
 
 ```bash
 cd Pa.HotNews.Web
@@ -261,8 +278,27 @@ This feature is controlled by the backend feature toggle.
 ```text
 Aneiang.Pa.News/
 ├── docments/
-├── Pa.HotNews.Api/
-└── Pa.HotNews.Web/
+├── Pa.HotNews.Api/     # .NET Web API backend (.NET 10 / Aneiang.Pa 4.0)
+│   ├── Controllers/
+│   ├── Extensions/
+│   └── Program.cs
+├── Pa.HotNews.Blazor/  # Blazor Server frontend (.NET 10 / Aneiang.Pa 4.0)
+│   ├── Models/
+│   ├── Pages/
+│   ├── Services/
+│   ├── Shared/
+│   └── Program.cs
+├── Pa.HotNews.Web/     # React frontend
+│   ├── src/
+│   │   ├── components/
+│   │   ├── hooks/
+│   │   ├── services/
+│   │   ├── utils/
+│   │   ├── App.jsx
+│   │   └── main.jsx
+│   ├── vite.config.js
+│   └── package.json
+└── docker-compose.yml
 ```
 
 ## 🤝 Contributing
@@ -283,6 +319,7 @@ MIT License. See [LICENSE](LICENSE).
 - [Aneiang.Pa](https://pa.aneiang.com/) - Modular crawler library for .NET
 - [React](https://reactjs.org/) - UI library
 - [Ant Design](https://ant.design/) - UI component library
+- [AntDesign Blazor](https://antblazor.com/) - Ant Design for Blazor
 - [Vite](https://vitejs.dev/) - Frontend tooling
 - [ArtificialAnalysis](https://artificialanalysis.ai/) - LLM ranking data source
 
