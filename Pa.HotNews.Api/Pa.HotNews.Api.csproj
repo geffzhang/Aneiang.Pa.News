@@ -8,6 +8,8 @@
 
   <ItemGroup>
     <PackageReference Include="Aneiang.Pa.AspNetCore" Version="4.0.0" />
+    <PackageReference Include="ModelContextProtocol" Version="1.4.0" />
+    <PackageReference Include="ModelContextProtocol.AspNetCore" Version="1.4.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="10.2.3" />
 
     <!-- Logging (Serilog) -->

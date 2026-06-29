@@ -1,5 +1,6 @@
 using Aneiang.Pa.AspNetCore;
 using Microsoft.Extensions.FileProviders;
+using Pa.HotNews.Api.Mcp;
 using Serilog;
 using Serilog.Events;
 
@@ -61,6 +62,9 @@ builder.Services.AddSwaggerGen();
 // 2. Register Aneiang.Pa services (v4.0): unified registration for all scrapers & lottery
 builder.Services.AddPa();
 
+// 3. Register MCP Server (Model Context Protocol) — exposes Pa tools to AI agents
+builder.Services.AddMcpServer().WithTools<PaMcpTools>();
+
 var app = builder.Build();
 
 // === Dump basic configuration on startup (Scraper:*, LlmRanking:*, Site:*) ===
@@ -112,7 +116,8 @@ app.UseCors();
 app.UseAuthorization();
 
 app.MapControllers();
-app.MapPaApi(); // Aneiang.Pa 4.0 built-in scraper endpoints
+app.MapPaApi();   // Aneiang.Pa 4.0 REST API endpoints
+app.MapMcp("/mcp"); // MCP endpoint (AI agent tools: list_pa_sources, scrape_pa_source, pa_health_check)
 
 // 4. Add static files and SPA fallback
 var wwwrootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
